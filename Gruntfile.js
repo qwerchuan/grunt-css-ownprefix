@@ -31,12 +31,25 @@ module.exports = function(grunt) {
     // Configuration to be run (and then tested).
     css_ownprefix: {
       default_options:{
-        // options:{
-        // },
-        files:{
-          'tmp/':['test/fixtures/*.css','test/fixtures/*.html']
-        }
-      }
+        files:[{
+          expand: true,
+          cwd:'test/fixtures',
+          src:['*.css','*.html'],
+          dest:'tmp/'
+        }]
+
+      },
+      // custom_options:{
+      //   options:{
+      //     prefix:"rong-"
+      //   },
+      //   files:[{
+      //     expand: true,
+      //     cwd:'test/fixtures',
+      //     src:['*.css','*.html'],
+      //     dest:'tmp/'
+      //   }]
+      // }
     },
 
     // Unit tests.

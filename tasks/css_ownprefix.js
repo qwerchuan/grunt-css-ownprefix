@@ -9,12 +9,12 @@
 'use strict';
 
 module.exports = function(grunt) {
+  var path = require('path');
 
   // Please see the Grunt documentation for more information regarding task
   // creation: http://gruntjs.com/creating-tasks
 
   grunt.registerMultiTask('css_ownprefix', 'add own css prefix', function() {
-    // Merge task-specific and/or target-specific options with these defaults.
     var options = this.options({
       prefix: 'self-'
     });
@@ -34,9 +34,9 @@ module.exports = function(grunt) {
       });
     }
 
-    function getFileName(path){
-      var start = path.lastIndexOf('/');
-      return path.substring(start + 1, path.length);
+    function getFileName(filepath){
+      var start = filepath.lastIndexOf('/');
+      return filepath.substring(start + 1, filepath.length);
     }
 
     function addPrefix(filepath,str){
@@ -59,41 +59,46 @@ module.exports = function(grunt) {
     // Iterate over all specified file groups.
     this.files.forEach(function(f) {
 
-      if(grunt.file.isDir(f.dest)){
+        f.src.forEach(function(filepath) {
 
-        f.src.filter(function(filepath) {
+          filepath = unixifyPath(filepath);
 
-          if (!grunt.file.exists(filepath)) {
-            grunt.log.warn('Source file "' + filepath + '" not found.');
-            return false;
-          } else {
-            return true;
+          var isExpandedPair = f.orig.expand || false;
+
+          var dest = unixifyPath(f.dest);
+
+          if (detectDestType(dest) === 'directory') {
+            dest = (isExpandedPair) ? dest : path.join(dest, filepath);
           }
-        }).map(function(filepath) {
 
-          var src= grunt.file.read(filepath);
-          src= addPrefix(filepath,src);
-          grunt.file.write(f.dest + getFileName(filepath), src);
-          grunt.log.writeln('File "' + f.dest + getFileName(filepath) + '" created.');
+          if (!grunt.file.exists(filepath)||grunt.file.isDir(filepath)) {
+            grunt.log.warn('Source file "' + filepath + '" not found.');
+          } else {
+            var str= grunt.file.read(filepath);
+            str= addPrefix(filepath,str);
+            grunt.file.write(dest, str);
+            grunt.log.writeln('File "' + dest+ '" created.');
+
+          }
         });
-
-      }else{
-
-        var str=f.src.filter(function(filepath) {
-          if (!grunt.file.exists(filepath)) {
-            grunt.log.warn('Source file "' + filepath + '" not found.');
-            return false;
-          } else {
-            return true;
-          }
-        }).map(function(filepath) {
-          var s= grunt.file.read(filepath);
-          return addPrefix(filepath,s);
-        }).join(grunt.util.normalizelf("\n"));
-        grunt.log.writeln('File "' + f.dest + '" created.');
-      }
 
     });
   });
 
+  var detectDestType = function(dest) {
+    if (grunt.util._.endsWith(dest, '/')) {
+      return 'directory';
+    } else {
+      return 'file';
+    }
+  };
+
+
+  var unixifyPath = function(filepath) {
+    if (process.platform === 'win32') {
+      return filepath.replace(/\\/g, '/');
+    } else {
+      return filepath;
+    }
+  };
 };

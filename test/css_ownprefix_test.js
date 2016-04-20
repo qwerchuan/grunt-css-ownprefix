@@ -27,15 +27,19 @@ exports.css_ownprefix = {
     // setup here if necessary
     done();
   },
-  // default_options: function(test) {
-  //   test.expect(1);
-  //
-  //   var actual = grunt.file.read('tmp/default_options');
-  //   var expected = grunt.file.read('test/expected/default_options');
-  //   test.equal(actual, expected, 'should describe what the default behavior is.');
-  //
-  //   test.done();
-  // },
+  default_options: function(test) {
+    test.expect(2);
+
+    var actualcss = grunt.file.read('tmp/main.css');
+    var expectedcss = grunt.file.read('test/expected/main.css');
+    test.equal(actualcss, expectedcss, 'css should describe what the default behavior is.');
+
+    var actualhtml = grunt.file.read('tmp/index.html');
+    var expectedhtml = grunt.file.read('test/expected/index.html');
+    test.equal(actualhtml, expectedhtml, 'html should describe what the default behavior is.');
+
+    test.done();
+  },
   // custom_options: function(test) {
   //   test.expect(1);
   //
@@ -44,18 +48,5 @@ exports.css_ownprefix = {
   //   test.equal(actual, expected, 'should describe what the custom option(s) behavior is.');
   //
   //   test.done();
-  // },
-  prefix:function(test){
-     test.expect(1);
-
-    //  var actual = grunt.file.read('tmp/main.css');
-    //  var expected = grunt.file.read('test/expected/main.css');
-    //  test.equal(actual, expected, 'should describe what the default behavior is.');
-     //
-    //  var actualh = grunt.file.read('tmp/index.html');
-    //  var expectedh = grunt.file.read('test/expected/index.html');
-    //  test.equal(actualh, expectedh, 'should describe what the default behavior is.');
-
-      test.done();
-  }
+  // }
 };
